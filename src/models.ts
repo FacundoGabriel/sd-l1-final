@@ -1,5 +1,4 @@
 import * as jsonfile from "jsonfile";
-import "./pelis.json";
 
 class Peli {
   id: number;
@@ -36,7 +35,7 @@ class PelisCollection {
   async add(peli: Peli): Promise<boolean> {
     const peliExistente = await this.getById(peli.id);
     if (peliExistente) return false;
-
+    
     const all = await this.getAll();
     all.push(peli);
     await jsonfile.writeFile(this.filePath, all);
