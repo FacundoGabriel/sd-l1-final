@@ -1,31 +1,31 @@
-import { PelisCollection, Peli } from "./models";
+import { PelisCollection, Peli } from './models';
 
 class PelisController {
-  pelis: PelisCollection;
+  model: PelisCollection;
 
   constructor() {
-    this.pelis = new PelisCollection();
+    this.model = new PelisCollection();
   }
 
-  async get(options?: { id?: number; search?: { title?: string; tag?: string } }): Promise<Peli[] | Peli | null> {
-    if (options?.id) {
-      return await this.pelis.getById(options.id);
+  async get(options?: { id?: number; search?: { title?: string; tag?: string } }): Promise<Peli[]> {
+    if (!options) {
+      return this.model.getAll();
     }
-
-    if (options?.search) {
-      return await this.pelis.search(options.search);
+    if (options.id !== undefined) {
+      const peli = await this.model.getById(options.id);
+      return peli ? [peli] : [];
     }
-
-    return await this.pelis.getAll();
+    return this.model.search(options.search!);
   }
 
-  async getOne(options): Promise<Peli | null> {
-    const result = await this.get(options);
-    return Array.isArray(result) ? result[0] : result;
+  
+  getOne(options: { id?: number; search?: { title?: string; tag?: string } }): Promise<Peli | undefined> {
+    return this.get(options).then(res => res[0]);
   }
 
-  async add(peli: Peli): Promise<boolean> {
-    return await this.pelis.add(peli);
+ 
+  add(peli: Peli): Promise<boolean> {
+    return this.model.add(peli);
   }
 }
 

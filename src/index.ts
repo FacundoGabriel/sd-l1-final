@@ -1,34 +1,20 @@
-import minimist from "minimist";
-import { PelisController } from "./controllers";
+import minimist from 'minimist';
+import { PelisController } from './controllers';
 
 async function main() {
-  const params = minimist(process.argv.slice(2));
-  const controller = new PelisController();
+  const args = minimist(process.argv.slice(2));
+  const ctrl = new PelisController();
 
-  const comando = params._[0];
-
-  if (comando === "add") {
-    const newPeli = {
-      id: params.id,
-      title: params.title,
-      tags: Array.isArray(params.tags) ? params.tags : [params.tags],
-    };
-    const resultado = await controller.add(newPeli);
-    console.log(resultado);
-  } else if (comando === "get") {
-    const id = parseInt(params._[1]);
-    const resultado = await controller.get({ id });
-    console.log(resultado);
-  } else if (comando === "search") {
-    const searchParams = {
-      title: params.title,
-      tag: params.tag,
-    };
-    const resultado = await controller.get({ search: searchParams });
-    console.log(resultado);
+  if (args._[0] === 'add') {
+    const success = await ctrl.add({ id: args.id, title: args.title, tags: args.tags });
+    console.log(success ? 'Se agregó la peli' : 'Error al agregar (id repetido)');
+  } else if (args._[0] === 'get') {
+    const pelis = await ctrl.get({ id: Number(args._[1]) });
+    console.log(pelis);
   } else {
-    const resultado = await controller.get();
-    console.log(resultado);
+
+    const pelis = await ctrl.get({ search: { title: args.title, tag: args.tag } });
+    console.log(pelis);
   }
 }
 
